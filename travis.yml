@@ -1,0 +1,14 @@
+language: objective-c
+
+osx_image: xcode14.1
+env:
+  matrix:
+    - TEST_SDK=iphonesimulator15.0 OS=15.0 NAME='iPhone 12'
+    - TEST_SDK=iphonesimulator12.4 OS=12.4 NAME='iPhone 5s'
+
+script:
+  - set -o pipefail && xcodebuild test -enableCodeCoverage YES -project SwiftyLib.xcodeproj -scheme SwiftyLib -sdk $TEST_SDK -destination "platform=iOS Simulator,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES
+after_success:
+  - slather
+  - bash <(curl -s https://codecov.io/bash) -f reports/cobertura.xml -X coveragepy -X gcov -X xcode
+
